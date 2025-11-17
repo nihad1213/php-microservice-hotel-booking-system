@@ -177,36 +177,45 @@ cd services/search-service
 php -S localhost:8006
 ```
 
-## Service Communication
+## Folder Structure Explained
 
-Services communicate through:
-1. **API Gateway**: Routes external requests to appropriate services
-2. **Inter-service calls**: Services can call each other via HTTP requests
-3. **Shared authentication**: JWT tokens validated across services
+### `/api-gateway/`
+Acts as the single entry point for all client requests. Routes incoming API calls to the appropriate microservice based on URL patterns. Handles request forwarding, response aggregation, and CORS configuration.
 
-## Key Features
+### `/services/`
+Contains all independent microservices, each with its own database and business logic.
 
-- **Independent Deployment**: Each service can be deployed separately
-- **Scalability**: Scale services based on demand (search and booking handle more traffic)
-- **Fault Isolation**: Failure in one service doesn't crash the entire system
-- **Technology Flexibility**: Each service can use different tech if needed
-- **Team Independence**: Different teams can work on different services
+#### `/services/property-service/`
+Manages property listings, amenities, and availability. Hosts can create/update properties, guests can view property details. Handles all property-related CRUD operations.
 
-## Security
+#### `/services/booking-service/`
+Handles reservation creation, retrieval, and cancellations. Manages check-in/check-out dates, guest counts, and booking status (pending, confirmed, cancelled).
 
-- JWT-based authentication
-- Password hashing with `password_hash()`
-- Input validation and sanitization
-- SQL injection prevention with prepared statements
-- CORS configuration in API Gateway
+#### `/services/user-service/`
+Manages user authentication, registration, and profiles. Handles both guest and host accounts, generates JWT tokens for secure authentication across services.
 
-## Testing
+#### `/services/payment-service/`
+Processes payments for bookings, handles refunds, and stores transaction records. Integrates with payment gateways and tracks payment status.
 
-Test each service independently:
-```bash
-# Test Property Service
-curl http://localhost:8001/api/properties
+#### `/services/review-service/`
+Allows guests to rate and review properties after their stay. Manages review CRUD operations and calculates average ratings for properties.
 
-# Test through API Gateway
-curl http://localhost:8000/api/properties
-```
+#### `/services/search-service/`
+Provides advanced property search with filters (location, dates, price, guests, amenities). Optimized for fast search queries with indexed data.
+
+### `/shared/`
+Contains reusable code shared across all microservices.
+
+#### `/shared/utils/`
+- **JWT.php**: Handles JSON Web Token encoding/decoding for authentication
+- **Response.php**: Standardizes API responses (success, error, JSON formatting)
+
+#### `/shared/middleware/`
+- **AuthMiddleware.php**: Validates JWT tokens and protects routes requiring authentication
+
+### Folder Structure Inside Each Service:
+- **`config/`**: Database connection configuration
+- **`controllers/`**: Business logic and request handling
+- **`models/`**: Database models and data operations
+- **`database.sql`**: SQL schema for the service's database
+- **`index.php`**: Entry point that routes requests to controllers
