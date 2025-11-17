@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // Service URLs
 define('SERVICE_URLS', [
     'booking' => 'http://localhost:8000',
