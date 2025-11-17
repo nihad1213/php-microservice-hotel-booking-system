@@ -177,7 +177,7 @@ cd services/search-service
 php -S localhost:8006
 ```
 
-## Folder Structure Explained
+## Folder Structure
 
 ### `/api-gateway/`
 Acts as the single entry point for all client requests. Routes incoming API calls to the appropriate microservice based on URL patterns. Handles request forwarding, response aggregation, and CORS configuration.
